@@ -1,3 +1,4 @@
+
 " Vim 8 defaults
 unlet! skip_defaults_vim
 silent! source $VIMRUNTIME/defaults.vim
@@ -8,56 +9,16 @@ augroup END
 
 let s:darwin = has('mac')
 let s:windows = has('win32') || has('win64')
-let mapleader      = ' '
-let maplocalleader = ' '
+let mapleader      = ';'
+let maplocalleader = ';'
 
 syntax on
 
-set fileformat=unix
-set encoding=UTF-8
-
-au BufNewFile,BufRead *.py
-    \ set tabstop=4 |
-    \ set softtabstop=4 |
-    \ set shiftwidth=4 |
-set tabstop=2
-set softtabstop=2
-set shiftwidth=2
-set autoindent
-set smartindent
-set smarttab
-set expandtab
-set nowrap
-set list
-set listchars=eol:.,tab:>-,trail:~,extends:>,precedes:<
-
-set cursorline
-set number
-set relativenumber
-set scrolloff=8
-set signcolumn=yes
-set showcmd
-set noshowmode
-set conceallevel=1
-set shortmess+=c
-set formatoptions-=cro
-
-set noerrorbells visualbell t_vb=
-set noswapfile
-set nobackup
-set undodir=~/.vim/undodir
-set undofile
-set clipboard=unnamed
-
-set ignorecase
-set smartcase
-set incsearch
-set hlsearch
-nnoremap <CR> :noh<CR><CR>:<backspace>
 
 so ~/.vim/plugins.vim
 so ~/.vim/plugin-config.vim
 so ~/.vim/autoclose.vim
+so ~/.vim/basic-settings.vim
 
 "-- COLOR & THEME CONFIG
 set termguicolors
@@ -70,31 +31,88 @@ let g:terminal_ansi_colors = [
     \ '#928374', '#fb4934', '#b8bb26', '#fabd2f', '#83a598', '#d3869b', '#8ec07c', '#ebdbb2',
 \]
 
-"-- Subtle Hard Mode*.js Prettier
-" noremap <Up> <NOP>
-" noremap <Down> <NOP>
-" noremap <Left> <NOP>
-" noremap <Right> <NOP>
-" noremap h <NOP>
-" noremap j <NOP>
-" noremap k <NOP>
-" noremap l <NOP>
 
-map f /
-map F ?
 
-"-- Using Map Leader"
-let mapleader = ";"
-map <leader>n :bn<cr>
-map <leader>p :bp<cr>
-map <leader>t gt
-map <leader>c :let $VIM_DIR=expand('%:p:h')<CR>:terminal<CR>cd $VIM_DIR<CR>
 
-" map <leader>; :bd<cr> 
 
-"-- [副作用を引き起こすvimで自動保存](https://isolution.pro/q/vm13024213/fukusayo-o-hikiokosu-vim-de-jido-hozon)"
 augroup AUTOSAVE
   au!
   autocmd InsertLeave,TextChanged,FocusLost * silent! write
 augroup END
+
+" ============================================================================
+" MAPPINGS
+" ============================================================================
+
+" ----------------------------------------------------------------------------
+" Basic mappings
+" ----------------------------------------------------------------------------
+
+nnoremap <CR> :noh<CR><CR>:<backspace>
+map f /
+map F ?
+map <leader>n :bn<cr>
+map <leader>p :bp<cr>
+map <leader>t gt
+map <leader>c :let $VIM_DIR=expand('%:p:h')<CR>:terminal<CR>cd $VIM_DIR<CR>
+map <leader>; :bd<cr> 
+
+" Save
+inoremap <C-s>     <C-O>:update<cr>
+nnoremap <C-s>     :update<cr>
+nnoremap <leader>s :update<cr>
+nnoremap <leader>w :update<cr>
+
+" Disable CTRL-A on tmux or on screen
+if $TERM =~ 'screen'
+  nnoremap <C-a> <nop>
+  nnoremap <Leader><C-a> <C-a>
+endif
+
+" Quit
+inoremap <C-Q>     <esc>:q<cr>
+nnoremap <C-Q>     :q<cr>
+vnoremap <C-Q>     <esc>
+nnoremap <Leader>q :q<cr>
+nnoremap <Leader>Q :qa!<cr>
+
+" Tags
+nnoremap <C-]> g<C-]>
+nnoremap g[ :pop<cr>
+
+" Jump list (to newer position)
+nnoremap <C-p> <C-i>
+
+" <leader>n | NERD Tree
+nnoremap <leader>n :NERDTreeToggle<cr>
+
+cnoremap <ESC> <C-c>
+
+" Movement ind insert mode
+" inoremap <C-h> <C-o>h
+" inoremap <C-l> <C-o>a
+" inoremap <C-j> <C-o>j
+" inoremap <C-k> <C-o>k
+" inoremap <C-^> <C-o><C-^>
+
+" Yank until the end of line
+nnoremap Y y$
+
+" qq to record, Q to replay
+nnoremap Q @q
+
+" Zoom
+function! s:zoom()
+  if winnr('$') > 1
+    tab split
+  elseif len(filter(map(range(tabpagenr('$')), 'tabpagebuflist(v:val + 1)'),
+                  \ 'index(v:val, '.bufnr('').') >= 0')) > 1
+    tabclose
+  endif
+endfunction
+nnoremap <silent> <leader>z :call <sid>zoom()<cr>
+
+" Last inserted text
+nnoremap g. :normal! `[v`]<cr><left>
+
 
