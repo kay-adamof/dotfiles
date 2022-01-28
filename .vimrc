@@ -51,11 +51,14 @@ augroup END
 nnoremap <CR> :noh<CR><CR>:<backspace>
 map f /
 map F ?
+" switch next buffer"
 map <leader>n :bn<cr>
-map <leader>p :bp<cr>
+" switch next tab"
 map <leader>t gt
+" open terminal in the directory of the current file"
 map <leader>c :let $VIM_DIR=expand('%:p:h')<CR>:terminal<CR>cd $VIM_DIR<CR>
-map <leader>; :bd<cr> 
+" buffer delete"
+" map <leader>; :bd<cr> 
 
 " Save
 inoremap <C-s>     <C-O>:update<cr>
